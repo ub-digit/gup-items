@@ -1,0 +1,19 @@
+curl --data "publication[title]=Banan&publication[author]=Stefan&publication[pubyear]=1900&publication[abstract]=Tjosanhoppsan" http://localhost:3000/publications
+
+
+# två titlar
+curl --data "publication[title]=Citron&publication[title]=Dadel&publication[author]=Stefan&publication[pubyear]=1900&publication[abstract]=Tjosanhoppsan" http://localhost:3000/publications > kolla.html; firefox kolla.html
+Resultat: den tog dadel, alltså den sista förekomsten av titel
+
+# ingen titel
+curl --data "publication[author]=Stefan&publication[pubyear]=1900&publication[abstract]=Tjosanhoppsan" http://localhost:3000/publications > kolla.html; firefox kolla.html
+Resultat: skapade inte posten, id=null, titel=null. returnerar {"publication":{"id":null,"title":null,"author":"Stefan","pubyear":1900,"abstract":"Tjosanhoppsan","created_at":null,"updated_at":null}}
+
+# republication isf publication
+curl --data "publication[title]=Banan&publication[author]=Stefan&publication[pubyear]=1900&publication[abstract]=Tjosanhoppsan&republication[author]=KjellBrel" http://localhost:3000/publications > kolla.html; firefox kolla.html
+Resultat: den struntar i republication, vet ej om felmeddelanden
+
+# har med en sak som inte finns
+curl --data "publication[title]=Banan&publication[author]=Stefan&publication[pubyear]=1900&publication[abstract]=Tjosanhoppsan&publication[pubtype]=Artikel" http://localhost:3000/publications > kolla.html; firefox kolla.html
+Resultat: struntar i pubtype
+

@@ -1,0 +1,56 @@
+pub1:
+  id: 1
+  pubid: 1001
+  title: "Test-title"
+  author: "Bengt Sändh"
+  pubyear: 2014
+  is_deleted: false
+
+pub2:
+  id: 2
+  pubid: 1002
+  title: "Test-title 2, version 1"
+  author: "Bengt Sändh"
+  pubyear: 2014
+  is_deleted: true
+  is_draft: true
+pub3:
+  id: 3
+  pubid: 1002
+  title: "Test-title 2, version 2"
+  author: "Bengt Sändh"
+  pubyear: 2014
+  is_deleted: true
+  is_draft: true
+pub4:
+  id: 4
+  pubid: 1002
+  title: "Test-title 2, version 3"
+  author: "Bengt Sändh"
+  pubyear: 2014
+  is_deleted: false
+  is_draft: true
+pub5:
+  id: 5
+  pubid: 1003
+  title: "Test-title 3, version 1"
+  author: "Bengt Sändh"
+  pubyear: 2014
+  is_deleted: true
+  is_draft: true
+pub6:
+  id: 6
+  pubid: 1003
+  title: "Test-title 3, version 2"
+  author: "Bengt Sändh"
+  pubyear: 2014
+  is_deleted: true
+  is_draft: false  
+pub7:
+  id: 7
+  pubid: 1003
+  title: "Test-title 3, version 3"
+  author: "Bengt Sändh"
+  pubyear: 2014
+  is_deleted: false
+  is_draft: false  
