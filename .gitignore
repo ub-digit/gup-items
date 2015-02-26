@@ -12,7 +12,6 @@ Gemfile.lock
 .DS_Store
 db/*.sqlite3
 config/database.yml
-config/secrets.yml
 deploy-info.html
 config/initializers/gup_config.rb
 
