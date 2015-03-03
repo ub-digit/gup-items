@@ -92,7 +92,7 @@ RSpec.describe PublicationsController, :type => :controller do
 
   describe "GET publication" do
     it "should return correct json publication data" do
-      get :show, pubid: 1001
+      get :show, pubid: 991
       expect(json['publication']['title']).to eq 'Test-title'
     end
     it "should reject non-existing id" do
@@ -100,7 +100,7 @@ RSpec.describe PublicationsController, :type => :controller do
       expect(response.status).to eq 404
     end
     it "should return a root element" do
-      get :show, pubid: 1001
+      get :show, pubid: 991
       expect(json['publication']).to be_kind_of(Hash)
     end
   end
