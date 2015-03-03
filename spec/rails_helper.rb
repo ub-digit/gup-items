@@ -17,22 +17,22 @@ Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 # If you are not using ActiveRecord, you can remove this line.
 ActiveRecord::Migration.check_pending! if defined?(ActiveRecord::Migration)
 
-VCR.configure do |c|
-  c.cassette_library_dir = 'spec/fixtures/cassettes'
-  c.hook_into :webmock
-  c.ignore_localhost = true
-  c.around_http_request do |request|
-    VCR.use_cassette(get_cassette_path(request), &request)
-    #VCR.turn_off!(:ignore_cassettes => true)
-  end
-end
+#VCR.configure do |c|
+#  c.cassette_library_dir = 'spec/fixtures/cassettes'
+#  c.hook_into :webmock
+#  c.ignore_localhost = true
+#  c.around_http_request do |request|
+#    VCR.use_cassette(get_cassette_path(request), &request)
+#    #VCR.turn_off!(:ignore_cassettes => true)
+#  end
+#end
 
 
 WebMock.allow_net_connect!
 
-def get_cassette_path(request)
-  return request.uri.to_s
-end
+#def get_cassette_path(request)
+#  return request.uri.to_s
+#end
 
 
 RSpec.configure do |config|

@@ -1,4 +1,4 @@
-require 'vcr'
+#require 'vcr'
 require 'webmock/rspec'
 
 #VCR.configure do |c|
