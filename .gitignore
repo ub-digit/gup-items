@@ -6,7 +6,6 @@
 etc
 log
 tmp
-Gemfile.lock
 .ruby-version
 .ruby-gemset
 .DS_Store
