@@ -15,7 +15,7 @@ class Publication < ActiveRecord::Base
     Publication.find_by_sql("SELECT nextval('publications_pubid_seq');").first.nextval.to_i
   end 
 
-private
+  private
   def uniqueness_of_pubid
     # For a given pubid only one publication should be active
     if is_deleted == false && !Publication.where(pubid: pubid).where(is_deleted: false).empty?
@@ -24,7 +24,7 @@ private
   end
 
   def by_publication_type
-  	if !is_draft
+    if !is_draft
       if publication_type.nil? || publication_type.id == PublicationType.find_by_label("none").id
         errors.add(:publication_type_id, 'Needs a publication type')
       else
