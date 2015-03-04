@@ -146,8 +146,8 @@ class PublicationsController < ApplicationController
   end
 
   def update
-    pubid = params[:pubid]
-    publication_old = Publication.where(is_deleted: false).find_by_pubid(pubid)
+    id = params[:id]
+    publication_old = Publication.where(is_deleted: false).find_by_id(id)
     if publication_old
 
       params[:publication][:pubid] = publication_old.pubid
@@ -162,7 +162,7 @@ class PublicationsController < ApplicationController
       if publication_new.save
         publication_old.update_attribute(:is_deleted, true)
         publication_new.update_attribute(:is_deleted, false)
-        publication_new.update_attribute(:pubid, pubid)
+        publication_new.update_attribute(:pubid, publication_old.pubid)
         render json: publication_new.to_json(root: true), status: 200
       else
         render json: {errors: publication_new.errors}, status: 422
@@ -173,8 +173,8 @@ class PublicationsController < ApplicationController
   end
 
   def delete
-    pubid = params[:pubid]
-    publication = Publication.where(is_deleted: false).find_by_pubid(pubid)
+    id = params[:id]
+    publication = Publication.where(is_deleted: false).find_by_id(id)
     if publication
       publication.update_attribute(:is_deleted, true)
     else

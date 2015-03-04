@@ -12,8 +12,8 @@ GupPublications::Application.routes.draw do
 
   post 'publications/import_file' => 'publications#import_file'  
   post 'publications' => 'publications#create'  
-  put 'publications/:pubid' => 'publications#update'
-  delete 'publications/:pubid' => 'publications#delete'
+  put 'publications/:id' => 'publications#update'
+  delete 'publications/:id' => 'publications#delete'
 
 
   get 'publication_types' => 'publication_types#index'

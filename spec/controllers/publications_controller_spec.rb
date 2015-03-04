@@ -266,8 +266,8 @@ end
     it "should save publication in database" do
       post :create, datasource: "none", publication: {}
       tmp = JSON.parse(response.body)
-      pubid = tmp['publication']['pubid']
-      put :update, pubid: pubid, publication: {
+      id = tmp['publication']['id']
+      put :update, id: id, publication: {
         is_draft: "false",
         publication_type_id: PublicationType.find_by_label('article-ref').id.to_s,
         title: "Test-title", 
@@ -349,8 +349,8 @@ end
       it "should return the saved publication and a 200 (ok) response" do
         post :create, datasource: "none", publication: {}
         tmp = JSON.parse(response.body)
-        pubid = tmp['publication']['pubid']        
-        put :update, pubid: pubid, publication: {
+        id = tmp['publication']['id']        
+        put :update, id: id, publication: {
           is_draft: "false",
           publication_type_id: PublicationType.find_by_label('article-pop').id.to_s,
           title: "Test-title", 
@@ -437,8 +437,8 @@ end
       it "should return the saved publication" do
         post :create, datasource: "none", publication: {}
         tmp = JSON.parse(response.body)
-        pubid = tmp['publication']['pubid']
-        put :update, pubid: pubid, publication: {
+        id = tmp['publication']['id']
+        put :update, id: id, publication: {
           is_draft: "false",
           publication_type_id: PublicationType.find_by_label('article-ref').id.to_s,
           title: "Test-title", 
@@ -467,8 +467,8 @@ end
       it "should return errors when save fails" do
         post :create, datasource: "none", publication: {}
         tmp = JSON.parse(response.body)
-        pubid = tmp['publication']['pubid']        
-        put :update, pubid: pubid, publication: {
+        id = tmp['publication']['id']        
+        put :update, id: id, publication: {
           is_draft: "false",
           publication_type_id: PublicationType.find_by_label('article-ref').id.to_s, 
           author: "Bengt Sändh", 
@@ -483,8 +483,8 @@ end
       it "should ignore any no existing field" do
         post :create, datasource: "none", publication: {}
         tmp = JSON.parse(response.body)
-        pubid = tmp['publication']['pubid']
-        put :update, pubid: pubid, publication: {
+        id = tmp['publication']['id']
+        put :update, id: id, publication: {
           is_draft: "false",
           dummy_field: "dummy value",
           publication_type_id: PublicationType.find_by_label('article-pop').id.to_s,
@@ -501,8 +501,8 @@ end
       it "should return the publication when saving a draft" do
         post :create, datasource: "none", publication: {}
         tmp = JSON.parse(response.body)
-        pubid = tmp['publication']['pubid']
-        put :update, pubid: pubid, publication: {
+        id = tmp['publication']['id']
+        put :update, id: id, publication: {
           is_draft: "true"
         }
         expect(json).to be_kind_of(Hash)
@@ -514,8 +514,8 @@ end
       it "should return the publication when saving a draft" do
         post :create, datasource: "none", publication: {}
         tmp = JSON.parse(response.body)
-        pubid = tmp['publication']['pubid']
-        put :update, pubid: pubid, publication: {
+        id = tmp['publication']['id']
+        put :update, id: id, publication: {
           is_draft: "true",
           publication_type_id:PublicationType.find_by_label('none').id.to_s,
         }
@@ -531,10 +531,9 @@ end
     it "should set the publication to deleted in the database" do
       post :create, datasource: "none", publication: {}
       tmp = JSON.parse(response.body)
-      pubid = tmp['publication']['pubid']
       id = tmp['publication']['id']
 
-      delete :delete, pubid: pubid
+      delete :delete, id: id
       expect(json).to be_kind_of(Hash)
       publication = Publication.find_by_id(id)
       expect(publication['is_deleted']).to eq true      
