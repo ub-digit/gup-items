@@ -6,6 +6,12 @@ RSpec.configure do |c|
 end
 
 RSpec.describe PublicationTypesController, :type => :controller do
+  before :each do
+    WebMock.disable_net_connect!
+  end
+  after :each do
+    WebMock.allow_net_connect!
+  end
   describe "GET publication types" do
     it "should return correct json publication type data" do
       get :show, id: PublicationType.find_by_label('article-ref').id

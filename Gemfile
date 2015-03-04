@@ -55,7 +55,7 @@ group :development, :test do
 end
 
 group :test do
-  gem 'vcr'
+#  gem 'vcr'
   gem 'webmock', '< 1.16'
 end
 

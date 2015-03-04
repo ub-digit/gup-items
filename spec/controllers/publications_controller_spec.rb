@@ -9,13 +9,51 @@ end
 RSpec.describe PublicationsController, :type => :controller do
   fixtures :publications
 
-before :each do
-  @valid_1_record = fixture_file_upload('files/valid_1_record.xml', 'text/xml')
-  @valid_2_records = fixture_file_upload('files/valid_2_records.xml', 'text/xml')
-  @invalid = fixture_file_upload('files/invalid.xml', 'text/xml')
-  @unsupported_version = fixture_file_upload('files/unsupported_version.xml', 'text/xml')
-  @empty = fixture_file_upload('files/empty.xml', 'text/xml')
-end
+  before :each do
+    @valid_1_record = fixture_file_upload('files/valid_1_record.xml', 'text/xml')
+    @valid_2_records = fixture_file_upload('files/valid_2_records.xml', 'text/xml')
+    @invalid = fixture_file_upload('files/invalid.xml', 'text/xml')
+    @unsupported_version = fixture_file_upload('files/unsupported_version.xml', 'text/xml')
+    @empty = fixture_file_upload('files/empty.xml', 'text/xml')
+  end
+  before :each do
+    WebMock.disable_net_connect!
+
+    stub_request(:get, "http://libris.kb.se/xsearch?format=mods&format_level=full&n=1&query=isbn:(1234569789978-91-637-1542-6)").
+      with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+      to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/libris-978-91-637-1542-6123456789.xml"), :headers => {})
+
+    stub_request(:get, "http://libris.kb.se/xsearch?format=mods&format_level=full&n=1&query=isbn:(978-91-637-1542-6)").
+      with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+      to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/libris-978-91-637-1542-6.xml"), :headers => {})
+
+    stub_request(:get, "http://api.elsevier.com/content/search/index:SCOPUS?count=1&query=DOI(11223344/667788994455)&start=0&view=COMPLETE").
+      with(:headers => {'Accept'=>'application/atom+xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby', 'X-Els-Apikey'=>'1122334455', 'X-Els-Resourceversion'=>'XOCS'}).
+      to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/scopus-123456789%2f987654321.xml"), :headers => {})
+
+    stub_request(:get, "http://api.elsevier.com/content/search/index:SCOPUS?count=1&query=DOI(10.1109/IJCNN.2008.4634188)&start=0&view=COMPLETE").
+      with(:headers => {'Accept'=>'application/atom+xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby', 'X-Els-Apikey'=>'1122334455', 'X-Els-Resourceversion'=>'XOCS'}).
+      to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/scopus-10.1109%2fIJCNN.2008.4634188.xml"), :headers => {})
+
+    stub_request(:get, "http://gupea.ub.gu.se/dspace-oai/request?identifier=oai:gupea.ub.gu.se:2077/12345321654&metadataPrefix=scigloo&verb=GetRecord").
+      with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+      to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/gupea-123459999999.xml"), :headers => {})
+
+    stub_request(:get, "http://gupea.ub.gu.se/dspace-oai/request?identifier=oai:gupea.ub.gu.se:2077/12345&metadataPrefix=scigloo&verb=GetRecord").
+      with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+      to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/gupea-12345.xml"), :headers => {})
+
+    stub_request(:get, "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=25505574999999999&retmode=xml").
+      with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+      to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/pubmed-255055741354975.xml"), :headers => {})
+
+    stub_request(:get, "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=25505574&retmode=xml").
+      with(:headers => {'Accept'=>'*/*; q=0.5, application/xml', 'Accept-Encoding'=>'gzip, deflate', 'User-Agent'=>'Ruby'}).
+      to_return(:status => 200, :body => File.new("#{Rails.root}/spec/support/adapters/pubmed-25505574.xml"), :headers => {})
+  end
+  after :each do
+    WebMock.allow_net_connect!
+  end
 
 
   describe "GET publications" do
@@ -54,7 +92,7 @@ end
 
   describe "GET publication" do
     it "should return correct json publication data" do
-      get :show, pubid: 1001
+      get :show, pubid: 991
       expect(json['publication']['title']).to eq 'Test-title'
     end
     it "should reject non-existing id" do
@@ -62,7 +100,7 @@ end
       expect(response.status).to eq 404
     end
     it "should return a root element" do
-      get :show, pubid: 1001
+      get :show, pubid: 991
       expect(json['publication']).to be_kind_of(Hash)
     end
   end
@@ -98,7 +136,7 @@ end
         expect(json['publication']['id']).to be_truthy
         expect(json['publication']['pubid']).to be_truthy
       end
-    
+      
       it "should ignore any no existing field" do
         post :create, datasource: "none", publication: {
           dummy_field: "dummy value"
