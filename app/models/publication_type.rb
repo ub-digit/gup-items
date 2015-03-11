@@ -5,11 +5,11 @@ class PublicationType < ActiveRecord::Base
   validates_uniqueness_of :publication_type_code, :scope => :content_type
 
   FORM = {
-  	"common" => 
+  	"common" =>
   	  [:pubid,
-       :publication_type_id, 
-  	   :title, 
-  	   :alt_title, 
+       :publication_type_id,
+  	   :title,
+  	   :alt_title,
   	   :author,
   	   :pubyear,
        :abstract,
@@ -21,17 +21,19 @@ class PublicationType < ActiveRecord::Base
        :keywords,
        :pub_notes,
        :is_draft,
-       :is_deleted],
-  	"article-ref" => 
+       :is_deleted,
+       :created_by,
+       :updated_by],
+  	"article-ref" =>
   	  [:sourcetitle,
        :sourcevolume,
        :sourceissue,
        :sourcepages,
        :issn,
-       :eissn,  	   
+       :eissn,
        :project],
-  	"article" => 
-  	  [:sourcetitle, 
+  	"article" =>
+  	  [:sourcetitle,
        :sourcevolume,
        :sourceissue,
        :sourcepages,
@@ -46,26 +48,26 @@ class PublicationType < ActiveRecord::Base
        :sourcetitle,
        :isbn,
        :artwork_type],
-  	"book-chapter" => 
+  	"book-chapter" =>
   	  [:sourcetitle,
-  	   :sourcepages, 
-  	   :isbn,       
+  	   :sourcepages,
+  	   :isbn,
   	   :publisher,
        :place],
-  	"book-edited" => 
+  	"book-edited" =>
   	  [#:editor,
-  	   :extent, 
+  	   :extent,
        :publisher,
        :place,
        :series,
   	   :isbn],
-  	"book" => 
+  	"book" =>
   	  [:publisher,
        :place,
        :series,
   	   :isbn],
-  	"conference-proc" => 
-  	  [:sourcetitle, 
+  	"conference-proc" =>
+  	  [:sourcetitle,
        :sourcevolume,
        :sourceissue,
        :sourcepages,
@@ -73,9 +75,9 @@ class PublicationType < ActiveRecord::Base
   	   :eissn,
   	   :article_number,
   	   :isbn,
-  	   :project],  	
-    "other" => 
-      [:sourcetitle, 
+  	   :project],
+    "other" =>
+      [:sourcetitle,
        :sourcevolume,
        :sourceissue,
        :sourcepages,
@@ -83,44 +85,44 @@ class PublicationType < ActiveRecord::Base
   	   :eissn,
   	   :article_number,
   	   :isbn,
-  	   :extent, 
+  	   :extent,
        :publisher,
        :place,
-       :series],  	
-	"patent" => 
+       :series],
+	"patent" =>
 	  [:patent_applicant,
        :patent_application_number,
        :patent_application_date,
        :patent_number,
        :patent_date],
-    "text-critical-edition" => 
+    "text-critical-edition" =>
   	  [#:editor,
-  	   :extent, 
+  	   :extent,
        :publisher,
        :place,
        :isbn],
-    "thesis" => 
+    "thesis" =>
   	  [:dissdate,
        :disstime,
        :disslocation,
        :dissopponent,
-  	   :extent, 
+  	   :extent,
        :publisher,
        :place,
        :series,
-  	   :isbn]  
+  	   :isbn]
   }
 
   def self.get_all_fields
     all_fields = []
-    FORM.each_value do |type| 
+    FORM.each_value do |type|
       type.each do |field|
         all_fields << field
       end
     end
     all_fields.uniq
   end
-  
+
   def active_fields
   	(FORM[form_template]+FORM["common"]).uniq
   end
@@ -139,7 +141,7 @@ class PublicationType < ActiveRecord::Base
   	end
   end
 =end
-  
+
 
   def validate_publication publication
     validate_common publication
@@ -172,7 +174,7 @@ class PublicationType < ActiveRecord::Base
     end
   end
 
-  
+
 
   def is_number? obj
     obj.to_s == obj.to_i.to_s
