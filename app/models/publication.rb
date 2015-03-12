@@ -2,6 +2,7 @@ class Publication < ActiveRecord::Base
   default_scope {order('updated_at DESC')}
   
   belongs_to :publication_type
+  has_many :people2publications
   nilify_blanks :types => [:text]
 
   validates_presence_of :pubid
@@ -14,6 +15,25 @@ class Publication < ActiveRecord::Base
     # PG Specific
     Publication.find_by_sql("SELECT nextval('publications_pubid_seq');").first.nextval.to_i
   end 
+
+
+  def authors
+     [{id: 1, 
+       first_name: "Johan", 
+       last_name: "Andersson", 
+       year_of_birth: "1970", 
+       departments: [{name: "Test1"}, {name: "Test2"}]},
+      {id: 2, 
+       first_name: "Niclas",
+       last_name: "Magnusson", 
+       year_of_birth: "1971", 
+       departments: [{name: "Test1"}]}]
+  end
+
+  def as_json(options = {})
+    super(methods: [:authors])
+  end
+
 
   private
   def uniqueness_of_pubid
@@ -33,3 +53,4 @@ class Publication < ActiveRecord::Base
     end
   end
 end
+

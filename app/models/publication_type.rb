@@ -1,5 +1,6 @@
 class PublicationType < ActiveRecord::Base
-  has_many :publication_type
+  has_many :publications
+
   #validates_presence_of :label
   validates_presence_of :publication_type_code
   validates_uniqueness_of :publication_type_code, :scope => :content_type
@@ -11,6 +12,7 @@ class PublicationType < ActiveRecord::Base
   	   :title, 
   	   :alt_title, 
   	   :author,
+       :authors,
   	   :pubyear,
        :abstract,
        :publanguage,

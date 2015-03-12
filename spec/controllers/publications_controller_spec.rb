@@ -604,6 +604,8 @@ RSpec.describe PublicationsController, :type => :controller do
         expect(json['publication']['publication_type_id']).to eq PublicationType.find_by_label('none').id
       end
     end
+
+
   end
 
   describe "DELETE publication" do

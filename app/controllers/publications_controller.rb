@@ -18,7 +18,7 @@ class PublicationsController < ApplicationController
     if publication.nil?
       render json: {errors: 'Publikationen kunde tyvärr inte hittas.'}, status: 404
     else
-      render json: publication.to_json(root: true)
+      render json: {publication: publication}, status: 200
     end
   end
 
@@ -77,7 +77,7 @@ class PublicationsController < ApplicationController
     create_basic_data
     pub = Publication.new(permitted_params(params))
     if pub.save
-      render json: pub.to_json(root: true), status: 201
+      render json: {publication: pub}, status: 201
     else
       render json: {errors: pub.errors}, status: 422
     end    
@@ -163,7 +163,7 @@ class PublicationsController < ApplicationController
         publication_old.update_attribute(:is_deleted, true)
         publication_new.update_attribute(:is_deleted, false)
         publication_new.update_attribute(:pubid, publication_old.pubid)
-        render json: publication_new.to_json(root: true), status: 200
+        render json: {publication: publication_new}, status: 200
       else
         render json: {errors: publication_new.errors}, status: 422
       end
