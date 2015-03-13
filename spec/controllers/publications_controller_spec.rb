@@ -112,6 +112,13 @@ RSpec.describe PublicationsController, :type => :controller do
           expect(p['is_draft'] == false).to be_truthy
         end
       end  
+      it "should contain a people2publications field for each publication" do
+        get :index
+        json["publications"].each do |p| 
+          expect(p["people2publications"]).to_not be nil
+          expect(p["people2publications"]).to be_an(Array)
+        end
+      end    
     end
 
     context "drafts" do 
@@ -128,6 +135,13 @@ RSpec.describe PublicationsController, :type => :controller do
           expect(p['is_draft'] == true).to be_truthy
         end
       end  
+      it "should contain a people2publications field for each draft" do
+        get :drafts
+        json["publications"].each do |p| 
+          expect(p["people2publications"]).to_not be nil
+          expect(p["people2publications"]).to be_an(Array)
+        end
+      end    
     end
   end
 
@@ -144,6 +158,11 @@ RSpec.describe PublicationsController, :type => :controller do
       get :show, pubid: 991
       expect(json['publication']).to be_kind_of(Hash)
     end
+    it "should return a people2publications field" do
+      get :show, pubid: 991
+      expect(json["publication"]["people2publications"]).to_not be nil
+      expect(json["publication"]["people2publications"]).to be_an(Array)
+    end    
   end
 
   describe "POST publication" do
@@ -543,6 +562,29 @@ RSpec.describe PublicationsController, :type => :controller do
     end
 
     context "for any publication type" do
+      it "should return people2publications field with expected data" do
+        post :create, datasource: "none", publication: {}
+        tmp = JSON.parse(response.body)
+        id = tmp['publication']['id']        
+        put :update, id: id, publication: {
+          is_draft: "false",
+          publication_type_id: PublicationType.find_by_label('article-ref').id.to_s, 
+          title: "Test-title", 
+          author: "Bengt Sändh", 
+          pubyear: "2014", 
+          abstract: "This is an abstract...",
+          sourcetitle: "Test-journal",
+          people2publications:  [{person_id: 1, department_name: "Test department", position: 1}]
+        }
+        expect(json).to be_kind_of(Hash)
+        expect(json['publication']['id']).to be_truthy
+        expect(json['publication']['people2publications']).to be_kind_of(Array)
+        expect(json['publication']['people2publications'][0]['person_id']).to eq 1
+        expect(json['publication']['people2publications'][0]['department_name']).to eq "Test department"
+        expect(json['publication']['people2publications'][0]['position']).to eq 1
+
+      end
+
       it "should return errors when save fails" do
         post :create, datasource: "none", publication: {}
         tmp = JSON.parse(response.body)

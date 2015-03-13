@@ -159,10 +159,12 @@ class PublicationsController < ApplicationController
         publication_new = Publication.new(permitted_pubtype_params(params[:publication][:publication_type_id]))
       end
 
+
       if publication_new.save
         publication_old.update_attribute(:is_deleted, true)
         publication_new.update_attribute(:is_deleted, false)
         publication_new.update_attribute(:pubid, publication_old.pubid)
+        create_affiliation publication_new.id, params[:people2publications] unless params[:people2publications].blank?
         render json: {publication: publication_new}, status: 200
       else
         render json: {errors: publication_new.errors}, status: 422
@@ -171,6 +173,13 @@ class PublicationsController < ApplicationController
       render json: {errors: 'Publikationen kunde tyvärr inte hittas.'}, status: 404
     end
   end
+
+  def create_affiliation publication_id, people2publications
+    people2publications.each do |p2p|
+      People2publication.create({publication_id: publication_id, person_id: p2p[:person_id], position: p2p[:position], department_name: p2p[:department_name]})
+    end
+  end
+
 
   def delete
     id = params[:id]

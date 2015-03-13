@@ -12,7 +12,6 @@ class PublicationType < ActiveRecord::Base
   	   :title,
   	   :alt_title,
   	   :author,
-       :authors,
   	   :pubyear,
        :abstract,
        :publanguage,
