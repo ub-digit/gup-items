@@ -6,7 +6,7 @@ class PublicationsController < ApplicationController
     publications = Publication.where(is_draft: false).where(is_deleted: false)
     render json: {publications: publications}, status: 200
   end
-  
+
   def drafts
     publications = Publication.where(is_draft: true).where(is_deleted: false)
     render json: {publications: publications}, status: 200
@@ -44,7 +44,7 @@ class PublicationsController < ApplicationController
       else
         render json: {errors: 'Identifikatorn hittades inte i GUPEA.'}, status: 422
         return
-      end    
+      end
 
     elsif adapter.eql?("scopus")
       scopus = Scopus.find_by_id(params[:sourceid])
@@ -71,7 +71,7 @@ class PublicationsController < ApplicationController
 #      else
 #        render json: {errors: 'Identifikatorn hittades inte i Crossref.'}, status: 422
 #        return
-#      end       
+#      end
     end
 
     create_basic_data
@@ -80,16 +80,16 @@ class PublicationsController < ApplicationController
       render json: pub.to_json(root: true), status: 201
     else
       render json: {errors: pub.errors}, status: 422
-    end    
+    end
   end
 
 
   def import_file
-    raw_xml = params[:file].read 
+    raw_xml = params[:file].read
     if raw_xml.blank?
       render json: {errors: 'Filen innehåller ingen data.'}, status: 422
       return
-    end      
+    end
     xml = Nokogiri::XML(raw_xml)
     if !xml.errors.empty?
       render json: {errors: 'Filen är inte valid.'}, status: 422
@@ -106,7 +106,7 @@ class PublicationsController < ApplicationController
     if !version_list.empty?
      render json: {errors: 'Filen är skapad av versioner av Endnote som inte stöds.'}, status: 422
      return
-    end     
+    end
 
     record_count = 0
     record_total = 0
@@ -131,7 +131,7 @@ class PublicationsController < ApplicationController
         end
       else
         render json: {errors: pub.errors}, status: 422
-      end    
+      end
     end
     render json: {publication: return_pub, meta: {result: {count: record_count, total: record_total}}}, status: 201
   end
@@ -142,7 +142,7 @@ class PublicationsController < ApplicationController
     params[:publication][:pubid] = pubid
     params[:publication][:is_draft] = true
     params[:publication][:is_deleted] = false
-    params[:publication][:publication_type_id] = PublicationType.find_by_label('none').id  
+    params[:publication][:publication_type_id] = PublicationType.find_by_label('none').id
   end
 
   def update
@@ -153,7 +153,7 @@ class PublicationsController < ApplicationController
       params[:publication][:pubid] = publication_old.pubid
       params[:publication][:is_deleted] = true
 
-      if !params[:publication][:publication_type_id] || (params[:publication][:publication_type_id].to_i == PublicationType.find_by_label('none').id)  
+      if !params[:publication][:publication_type_id] || (params[:publication][:publication_type_id].to_i == PublicationType.find_by_label('none').id)
         publication_new = Publication.new(permitted_params(params))
       else
         publication_new = Publication.new(permitted_pubtype_params(params[:publication][:publication_type_id]))
@@ -162,6 +162,7 @@ class PublicationsController < ApplicationController
       if publication_new.save
         publication_old.update_attribute(:is_deleted, true)
         publication_new.update_attribute(:is_deleted, false)
+        publication_new.update_attribute(:updated_by, 'xterminator')
         publication_new.update_attribute(:pubid, publication_old.pubid)
         render json: publication_new.to_json(root: true), status: 200
       else
