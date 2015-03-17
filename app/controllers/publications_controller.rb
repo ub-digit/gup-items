@@ -146,10 +146,9 @@ class PublicationsController < ApplicationController
   end
 
   def update
-    id = params[:id]
-    publication_old = Publication.where(is_deleted: false).find_by_id(id)
+    pubid = params[:pubid]
+    publication_old = Publication.where(is_deleted: false).find_by_pubid(pubid)
     if publication_old
-
       params[:publication][:pubid] = publication_old.pubid
       params[:publication][:is_deleted] = true
 
@@ -158,8 +157,6 @@ class PublicationsController < ApplicationController
       else
         publication_new = Publication.new(permitted_pubtype_params(params[:publication][:publication_type_id]))
       end
-
-
       if publication_new.save
         publication_old.update_attribute(:is_deleted, true)
         publication_new.update_attribute(:is_deleted, false)
@@ -175,15 +172,16 @@ class PublicationsController < ApplicationController
   end
 
   def create_affiliation publication_id, people2publications
-    people2publications.each do |p2p|
-      People2publication.create({publication_id: publication_id, person_id: p2p[:person_id], position: p2p[:position], department_name: p2p[:department_name]})
+
+    people2publications.each.with_index do |p2p, i|
+      People2publication.create({publication_id: publication_id, person_id: p2p[:person_id], position: i + 1, department_name: p2p[:department_name]})
     end
   end
 
 
   def delete
-    id = params[:id]
-    publication = Publication.where(is_deleted: false).find_by_id(id)
+    pubid = params[:pubid]
+    publication = Publication.where(is_deleted: false).find_by_pubid(pubid)
     if publication
       publication.update_attribute(:is_deleted, true)
     else
