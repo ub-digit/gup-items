@@ -172,9 +172,12 @@ class PublicationsController < ApplicationController
   end
 
   def create_affiliation publication_id, people2publications
-
     people2publications.each.with_index do |p2p, i|
-      People2publication.create({publication_id: publication_id, person_id: p2p[:person_id], position: i + 1, department_name: p2p[:department_name]})
+      p2p_obj = People2publication.create({publication_id: publication_id, person_id: p2p[:person_id], position: i + 1})
+      department_list = p2p[:departments2people2publications]
+      department_list.each.with_index do |d2p2p, j|
+        Departments2people2publication.create({people2publication_id: p2p_obj.id, department_name: d2p2p[:department_name], position: j + 1})
+      end
     end
   end
 
