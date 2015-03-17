@@ -585,7 +585,7 @@ RSpec.describe PublicationsController, :type => :controller do
           pubyear: "2014", 
           abstract: "This is an abstract...",
           sourcetitle: "Test-journal"
-         }, people2publications:  [{person_id: 1, departments2people2publications: [{department_name: "Test department 1"}, {department_name: "Test department 2"}]}, {person_id: 2, departments2people2publications: [{department_name: "Test department 3"}]}]
+         }, people2publications:  [{person_id: 1, departments2people2publications: [{name: "Test department 1"}, {name: "Test department 2"}]}, {person_id: 2, departments2people2publications: [{name: "Test department 3"}]}]
 
         expect(json).to be_kind_of(Hash)
         expect(json['publication']['id']).to be_truthy
@@ -595,12 +595,12 @@ RSpec.describe PublicationsController, :type => :controller do
         people2publications = json['publication']['people2publications']
         expect(people2publications[0]['person_id']).to eq 1
         expect(people2publications[0]['position']).to eq 1
-        expect(people2publications[0]['departments2people2publications'][0]['department_name']).to eq "Test department 1"
-        expect(people2publications[0]['departments2people2publications'][1]['department_name']).to eq "Test department 2"
+        expect(people2publications[0]['departments2people2publications'][0]['name']).to eq "Test department 1"
+        expect(people2publications[0]['departments2people2publications'][1]['name']).to eq "Test department 2"
 
         expect(people2publications[1]['person_id']).to eq 2
         expect(people2publications[1]['position']).to eq 2
-        expect(people2publications[1]['departments2people2publications'][0]['department_name']).to eq "Test department 3"
+        expect(people2publications[1]['departments2people2publications'][0]['name']).to eq "Test department 3"
       end
 
       it "should return errors when save fails" do
