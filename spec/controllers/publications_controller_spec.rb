@@ -296,13 +296,13 @@ RSpec.describe PublicationsController, :type => :controller do
 
     context "when creating a publication by importing a valid xml file with one record" do
       it "should return a json and a 201 (created) response" do
-        post :import_file, file: @valid_1_record
+        post :create, file: @valid_1_record
         expect(json).to_not be nil
         expect(json).to be_kind_of(Hash)
         expect(response.status).to eq 201
       end
       it "should return valid fields (tests only a selection)" do
-        post :import_file, file: @valid_1_record
+        post :create, file: @valid_1_record
         expect(json['publication']['id']).to be_truthy
         expect(json['publication']['pubid']).to be_truthy
         expect(json['publication']['is_draft']).to eq true
@@ -316,13 +316,13 @@ RSpec.describe PublicationsController, :type => :controller do
 
     context "when creating a publication by importing a valid xml file with two records" do
       it "should return a json and a 201 (created) response" do
-        post :import_file, file: @valid_2_records
+        post :create, file: @valid_2_records
         expect(json).to_not be nil
         expect(json).to be_kind_of(Hash)
         expect(response.status).to eq 201
       end
       it "should return valid fields for the first imported publication (tests only a selection)" do
-        post :import_file, file: @valid_2_records
+        post :create, file: @valid_2_records
         expect(json['publication']['id']).to be_truthy
         expect(json['publication']['pubid']).to be_truthy
         expect(json['publication']['is_draft']).to eq true
@@ -336,7 +336,7 @@ RSpec.describe PublicationsController, :type => :controller do
 
     context "when creating a publication by importing a file with invalid xml" do
       it "should return a json and a 422 response" do
-        post :import_file, file: @invalid
+        post :create, file: @invalid
         expect(json).to_not be nil
         expect(json).to be_kind_of(Hash)
         expect(response.status).to eq 422
@@ -344,7 +344,7 @@ RSpec.describe PublicationsController, :type => :controller do
     end
     context "when creating a publication by importing an empty file" do
       it "should return a json and a 422 response" do
-        post :import_file, file: @empty
+        post :create, file: @empty
         expect(json).to_not be nil
         expect(json).to be_kind_of(Hash)
         expect(response.status).to eq 422
@@ -352,7 +352,7 @@ RSpec.describe PublicationsController, :type => :controller do
     end
     context "when creating a publication by importing file that is created with an unsupported Endnote version" do
       it "should return a json and a 422 response" do
-        post :import_file, file: @unsupported_version
+        post :create, file: @unsupported_version
         expect(json).to_not be nil
         expect(json).to be_kind_of(Hash)
         expect(response.status).to eq 422

@@ -63,7 +63,7 @@ class PublicationsController < ApplicationController
         render json: {errors: 'Identifikatorn hittades inte i Libris.'}, status: 422
         return
       end
-
+    
 #    elsif adapter.eql?("crossref")
 #      crossref = Crossref.find_by_id(params[:sourceid])
 #      if crossref && crossref.errors.messages.empty?
@@ -72,6 +72,9 @@ class PublicationsController < ApplicationController
 #        render json: {errors: 'Identifikatorn hittades inte i Crossref.'}, status: 422
 #        return
 #      end       
+    elsif adapter.nil? && params[:file]
+      handle_file_import
+      return
     end
 
     create_basic_data
@@ -83,8 +86,7 @@ class PublicationsController < ApplicationController
     end    
   end
 
-
-  def import_file
+  def handle_file_import 
     raw_xml = params[:file].read 
     if raw_xml.blank?
       render json: {errors: 'Filen innehåller ingen data.'}, status: 422
@@ -134,6 +136,10 @@ class PublicationsController < ApplicationController
       end    
     end
     render json: {publication: return_pub, meta: {result: {count: record_count, total: record_total}}}, status: 201
+  end
+
+  def import_file
+    handle_file_import
   end
 
 
