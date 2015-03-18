@@ -74,6 +74,9 @@ class PublicationsController < ApplicationController
 #      end
     end
 
+    params[:publication][:created_by] = params[:username]
+    params[:publication][:updated_by] = params[:username]
+
     create_basic_data
     pub = Publication.new(permitted_params(params))
     if pub.save
@@ -162,7 +165,6 @@ class PublicationsController < ApplicationController
       if publication_new.save
         publication_old.update_attribute(:is_deleted, true)
         publication_new.update_attribute(:is_deleted, false)
-        publication_new.update_attribute(:updated_by, 'xterminator')
         publication_new.update_attribute(:pubid, publication_old.pubid)
         render json: publication_new.to_json(root: true), status: 200
       else
