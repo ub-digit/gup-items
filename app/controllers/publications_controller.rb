@@ -18,7 +18,7 @@ class PublicationsController < ApplicationController
     if publication.nil?
       render json: {errors: 'Publikationen kunde tyvärr inte hittas.'}, status: 404
     else
-      render json: publication.to_json(root: true)
+      render json: {publication: publication}, status: 200
     end
   end
 
@@ -80,7 +80,7 @@ class PublicationsController < ApplicationController
     create_basic_data
     pub = Publication.new(permitted_params(params))
     if pub.save
-      render json: pub.to_json(root: true), status: 201
+      render json: {publication: pub}, status: 201
     else
       render json: {errors: pub.errors}, status: 422
     end
@@ -149,10 +149,9 @@ class PublicationsController < ApplicationController
   end
 
   def update
-    id = params[:id]
-    publication_old = Publication.where(is_deleted: false).find_by_id(id)
+    pubid = params[:pubid]
+    publication_old = Publication.where(is_deleted: false).find_by_pubid(pubid)
     if publication_old
-
       params[:publication][:pubid] = publication_old.pubid
       params[:publication][:is_deleted] = true
 
@@ -161,12 +160,12 @@ class PublicationsController < ApplicationController
       else
         publication_new = Publication.new(permitted_pubtype_params(params[:publication][:publication_type_id]))
       end
-
       if publication_new.save
         publication_old.update_attribute(:is_deleted, true)
         publication_new.update_attribute(:is_deleted, false)
         publication_new.update_attribute(:pubid, publication_old.pubid)
-        render json: publication_new.to_json(root: true), status: 200
+        create_affiliation publication_new.id, params[:people2publications] unless params[:people2publications].blank?
+        render json: {publication: publication_new}, status: 200
       else
         render json: {errors: publication_new.errors}, status: 422
       end
@@ -175,9 +174,20 @@ class PublicationsController < ApplicationController
     end
   end
 
+  def create_affiliation publication_id, people2publications
+    people2publications.each.with_index do |p2p, i|
+      p2p_obj = People2publication.create({publication_id: publication_id, person_id: p2p[:person_id], position: i + 1})
+      department_list = p2p[:departments2people2publications]
+      department_list.each.with_index do |d2p2p, j|
+        Departments2people2publication.create({people2publication_id: p2p_obj.id, name: d2p2p[:name], position: j + 1})
+      end
+    end
+  end
+
+
   def delete
-    id = params[:id]
-    publication = Publication.where(is_deleted: false).find_by_id(id)
+    pubid = params[:pubid]
+    publication = Publication.where(is_deleted: false).find_by_pubid(pubid)
     if publication
       publication.update_attribute(:is_deleted, true)
     else

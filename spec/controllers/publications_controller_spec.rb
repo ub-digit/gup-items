@@ -112,6 +112,13 @@ RSpec.describe PublicationsController, :type => :controller do
           expect(p['is_draft'] == false).to be_truthy
         end
       end  
+      it "should contain a people2publications field for each publication" do
+        get :index
+        json["publications"].each do |p| 
+          expect(p["people2publications"]).to_not be nil
+          expect(p["people2publications"]).to be_an(Array)
+        end
+      end    
     end
 
     context "drafts" do 
@@ -128,6 +135,13 @@ RSpec.describe PublicationsController, :type => :controller do
           expect(p['is_draft'] == true).to be_truthy
         end
       end  
+      it "should contain a people2publications field for each draft" do
+        get :drafts
+        json["publications"].each do |p| 
+          expect(p["people2publications"]).to_not be nil
+          expect(p["people2publications"]).to be_an(Array)
+        end
+      end    
     end
   end
 
@@ -144,6 +158,11 @@ RSpec.describe PublicationsController, :type => :controller do
       get :show, pubid: 991
       expect(json['publication']).to be_kind_of(Hash)
     end
+    it "should return a people2publications field" do
+      get :show, pubid: 991
+      expect(json["publication"]["people2publications"]).to_not be nil
+      expect(json["publication"]["people2publications"]).to be_an(Array)
+    end    
   end
 
   describe "POST publication" do
@@ -345,8 +364,8 @@ RSpec.describe PublicationsController, :type => :controller do
     it "should save publication in database" do
       post :create, datasource: "none", publication: {}
       tmp = JSON.parse(response.body)
-      id = tmp['publication']['id']
-      put :update, id: id, publication: {
+      pubid = tmp['publication']['pubid']
+      put :update, pubid: pubid, publication: {
         is_draft: "false",
         publication_type_id: PublicationType.find_by_label('article-ref').id.to_s,
         title: "Test-title", 
@@ -428,8 +447,8 @@ RSpec.describe PublicationsController, :type => :controller do
       it "should return the saved publication and a 200 (ok) response" do
         post :create, datasource: "none", publication: {}
         tmp = JSON.parse(response.body)
-        id = tmp['publication']['id']        
-        put :update, id: id, publication: {
+        pubid = tmp['publication']['pubid']        
+        put :update, pubid: pubid, publication: {
           is_draft: "false",
           publication_type_id: PublicationType.find_by_label('article-pop').id.to_s,
           title: "Test-title", 
@@ -516,8 +535,8 @@ RSpec.describe PublicationsController, :type => :controller do
       it "should return the saved publication" do
         post :create, datasource: "none", publication: {}
         tmp = JSON.parse(response.body)
-        id = tmp['publication']['id']
-        put :update, id: id, publication: {
+        pubid = tmp['publication']['pubid']
+        put :update, pubid: pubid, publication: {
           is_draft: "false",
           publication_type_id: PublicationType.find_by_label('article-ref').id.to_s,
           title: "Test-title", 
@@ -543,11 +562,52 @@ RSpec.describe PublicationsController, :type => :controller do
     end
 
     context "for any publication type" do
+      it "should return people2publications field with expected data" do
+        post :create, datasource: "none", publication: {}
+        tmp = JSON.parse(response.body)
+        pubid = tmp['publication']['pubid']        
+#        put :update, pubid: pubid, publication: {
+#          is_draft: "false",
+#          publication_type_id: PublicationType.find_by_label('article-ref').id.to_s, 
+#          title: "Test-title", 
+#          author: "Bengt Sändh", 
+#          pubyear: "2014", 
+#          abstract: "This is an abstract...",
+#          sourcetitle: "Test-journal",
+#          people2publications:  [{person_id: 1, department_name: "Test department 1"}, {person_id: 2, department_name: "Test department 2"}]
+#        }
+
+        put :update, pubid: pubid, publication: {
+          is_draft: "false",
+          publication_type_id: PublicationType.find_by_label('article-ref').id.to_s, 
+          title: "Test-title", 
+          author: "Bengt Sändh", 
+          pubyear: "2014", 
+          abstract: "This is an abstract...",
+          sourcetitle: "Test-journal"
+         }, people2publications:  [{person_id: 1, departments2people2publications: [{name: "Test department 1"}, {name: "Test department 2"}]}, {person_id: 2, departments2people2publications: [{name: "Test department 3"}]}]
+
+        expect(json).to be_kind_of(Hash)
+        expect(json['publication']['id']).to be_truthy
+        expect(json['publication']['people2publications']).to be_kind_of(Array)
+    
+#        people2publications = json['people2publications']
+        people2publications = json['publication']['people2publications']
+        expect(people2publications[0]['person_id']).to eq 1
+        expect(people2publications[0]['position']).to eq 1
+        expect(people2publications[0]['departments2people2publications'][0]['name']).to eq "Test department 1"
+        expect(people2publications[0]['departments2people2publications'][1]['name']).to eq "Test department 2"
+
+        expect(people2publications[1]['person_id']).to eq 2
+        expect(people2publications[1]['position']).to eq 2
+        expect(people2publications[1]['departments2people2publications'][0]['name']).to eq "Test department 3"
+      end
+
       it "should return errors when save fails" do
         post :create, datasource: "none", publication: {}
         tmp = JSON.parse(response.body)
-        id = tmp['publication']['id']        
-        put :update, id: id, publication: {
+        pubid = tmp['publication']['pubid']        
+        put :update, pubid: pubid, publication: {
           is_draft: "false",
           publication_type_id: PublicationType.find_by_label('article-ref').id.to_s, 
           author: "Bengt Sändh", 
@@ -562,8 +622,8 @@ RSpec.describe PublicationsController, :type => :controller do
       it "should ignore any no existing field" do
         post :create, datasource: "none", publication: {}
         tmp = JSON.parse(response.body)
-        id = tmp['publication']['id']
-        put :update, id: id, publication: {
+        pubid = tmp['publication']['pubid']
+        put :update, pubid: pubid, publication: {
           is_draft: "false",
           dummy_field: "dummy value",
           publication_type_id: PublicationType.find_by_label('article-pop').id.to_s,
@@ -580,8 +640,8 @@ RSpec.describe PublicationsController, :type => :controller do
       it "should return the publication when saving a draft" do
         post :create, datasource: "none", publication: {}
         tmp = JSON.parse(response.body)
-        id = tmp['publication']['id']
-        put :update, id: id, publication: {
+        pubid = tmp['publication']['pubid']
+        put :update, pubid: pubid, publication: {
           is_draft: "true"
         }
         expect(json).to be_kind_of(Hash)
@@ -593,8 +653,8 @@ RSpec.describe PublicationsController, :type => :controller do
       it "should return the publication when saving a draft" do
         post :create, datasource: "none", publication: {}
         tmp = JSON.parse(response.body)
-        id = tmp['publication']['id']
-        put :update, id: id, publication: {
+        pubid = tmp['publication']['pubid']
+        put :update, pubid: pubid, publication: {
           is_draft: "true",
           publication_type_id:PublicationType.find_by_label('none').id.to_s,
         }
@@ -604,17 +664,19 @@ RSpec.describe PublicationsController, :type => :controller do
         expect(json['publication']['publication_type_id']).to eq PublicationType.find_by_label('none').id
       end
     end
+
+
   end
 
   describe "DELETE publication" do
     it "should set the publication to deleted in the database" do
       post :create, datasource: "none", publication: {}
       tmp = JSON.parse(response.body)
-      id = tmp['publication']['id']
+      pubid = tmp['publication']['pubid']
 
-      delete :delete, id: id
+      delete :delete, pubid: pubid
       expect(json).to be_kind_of(Hash)
-      publication = Publication.find_by_id(id)
+      publication = Publication.find_by_pubid(pubid)
       expect(publication['is_deleted']).to eq true      
     end
   end

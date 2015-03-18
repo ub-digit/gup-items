@@ -2,8 +2,8 @@ class Publication < ActiveRecord::Base
   default_scope {order('updated_at DESC')}
   
   belongs_to :publication_type
+  has_many :people2publications
   nilify_blanks :types => [:text]
-
   validates_presence_of :pubid
   validate :uniqueness_of_pubid
   validates_inclusion_of :is_draft, in: [true, false]
@@ -14,6 +14,11 @@ class Publication < ActiveRecord::Base
     # PG Specific
     Publication.find_by_sql("SELECT nextval('publications_pubid_seq');").first.nextval.to_i
   end 
+
+  def as_json(options = {})
+    super.merge(people2publications: people2publications)
+  end
+
 
   private
   def uniqueness_of_pubid
@@ -33,3 +38,4 @@ class Publication < ActiveRecord::Base
     end
   end
 end
+

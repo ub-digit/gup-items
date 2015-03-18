@@ -57,6 +57,7 @@ end
 group :test do
 #  gem 'vcr'
   gem 'webmock', '< 1.16'
+  gem 'shoulda'
 end
 
 gem 'rack-cors'
