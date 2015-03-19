@@ -73,7 +73,8 @@ class PublicationsController < ApplicationController
 #        return
 #      end
     elsif adapter.nil? && params[:file]
-      handle_file_import
+
+      handle_file_import params[:file][:tempfile][0]
       return
     end
 
@@ -89,8 +90,7 @@ class PublicationsController < ApplicationController
     end
   end
 
-  def handle_file_import
-    raw_xml = params[:file].read
+  def handle_file_import raw_xml
     if raw_xml.blank?
       render json: {errors: 'Filen innehåller ingen data.'}, status: 422
       return
@@ -142,7 +142,7 @@ class PublicationsController < ApplicationController
   end
 
   def import_file
-    handle_file_import
+    handle_file_import params[:file].read
   end
 
 

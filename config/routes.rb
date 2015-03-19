@@ -10,7 +10,7 @@ GupPublications::Application.routes.draw do
   get 'publications/drafts' => 'publications#drafts'
   get 'publications/:pubid' => 'publications#show'
 
-  #post 'publications/import_file' => 'publications#import_file'  
+  post 'publications/import_file' => 'publications#import_file'  
   post 'publications' => 'publications#create'  
   put 'publications/:pubid' => 'publications#update'
   delete 'publications/:pubid' => 'publications#delete'
