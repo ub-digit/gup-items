@@ -121,14 +121,23 @@ RSpec.describe PublicationsController, :type => :controller do
       end    
     end
 
-    context "drafts" do 
-      it "should return a list of draft objects" do
+    context "drafts without a username" do 
+      it "should return an empty list" do
         get :drafts
+        expect(json["publications"]).to_not be nil
+        expect(json["publications"]).to be_an(Array)
+        expect(json["publications"]).to eq []
+
+      end
+    end
+    context "drafts with a username" do 
+      it "should return a list of draft objects" do
+        get :drafts, username: 'xbbbbb'
         expect(json["publications"]).to_not be nil
         expect(json["publications"]).to be_an(Array)
       end
       it "should return only no deleted drafts" do
-        get :drafts
+        get :drafts, username: 'xbbbbb'
         expect(json["publications"]).to_not be nil
         json["publications"].each do |p| 
           expect(p['is_deleted'] == false).to be_truthy
@@ -136,7 +145,7 @@ RSpec.describe PublicationsController, :type => :controller do
         end
       end  
       it "should contain a people2publications field for each draft" do
-        get :drafts
+        get :drafts, username: 'xbbbbb'
         json["publications"].each do |p| 
           expect(p["people2publications"]).to_not be nil
           expect(p["people2publications"]).to be_an(Array)

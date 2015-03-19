@@ -5,7 +5,8 @@ pub1:
   author: "Bengt Sändh"
   pubyear: 2014
   is_deleted: false
-
+  created_by: xaaaaa
+  updated_by: xaaaaa
 pub2:
   id: 2
   pubid: 992
@@ -14,6 +15,8 @@ pub2:
   pubyear: 2014
   is_deleted: true
   is_draft: true
+  created_by: xaaaaa
+  updated_by: xaaaaa
 pub3:
   id: 3
   pubid: 992
@@ -22,6 +25,8 @@ pub3:
   pubyear: 2014
   is_deleted: true
   is_draft: true
+  created_by: xaaaaa
+  updated_by: xbbbbb
 pub4:
   id: 4
   pubid: 992
@@ -30,6 +35,8 @@ pub4:
   pubyear: 2014
   is_deleted: false
   is_draft: true
+  created_by: xaaaaa
+  updated_by: xaaaaa
 pub5:
   id: 5
   pubid: 993
@@ -38,6 +45,8 @@ pub5:
   pubyear: 2014
   is_deleted: true
   is_draft: true
+  created_by: xaaaaa
+  updated_by: xaaaaa
 pub6:
   id: 6
   pubid: 993
@@ -46,6 +55,8 @@ pub6:
   pubyear: 2014
   is_deleted: true
   is_draft: false  
+  created_by: xaaaaa
+  updated_by: xaaaaa
 pub7:
   id: 7
   pubid: 993
@@ -54,3 +65,5 @@ pub7:
   pubyear: 2014
   is_deleted: false
   is_draft: false  
+  created_by: xaaaaa
+  updated_by: xaaaaa

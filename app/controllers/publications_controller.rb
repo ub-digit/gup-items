@@ -3,13 +3,50 @@ class PublicationsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def index
-    publications = Publication.where(is_draft: false).where(is_deleted: false)
-    render json: {publications: publications}, status: 200
+    is_actor = params[:is_actor]
+    is_registrator = params[:is_registrator]
+
+    if is_actor == 'true'
+      index_actor
+      return
+    elsif is_registrator  == 'true'
+      index_registrator
+      return
+    else
+      publications = Publication.where(is_draft: false).where(is_deleted: false)
+      render json: {publications: publications}, status: 200
+    end
   end
 
+  def index_actor
+    person_id = params[:person_id]
+    if person_id
+      publications = Publication.where('id in (?)', People2publication.where('person_id = (?)', person_id).map { |p| p.id}).where(is_draft: false).where(is_deleted: false)      
+      render json: {publications: publications}, status: 200
+    else
+      render json: {publications: []}, status: 200
+    end      
+  end
+
+  def index_registrator
+    username = params[:username]
+    if username
+      publications = Publication.where('pubid in (?)', Publication.where('created_by = (?) or updated_by = (?)', username, username).map { |p| p.pubid}).where(is_draft: false).where(is_deleted: false)
+      render json: {publications: publications}, status: 200
+    else
+      render json: {publications: []}, status: 200
+    end
+  end
+
+
   def drafts
-    publications = Publication.where(is_draft: true).where(is_deleted: false)
-    render json: {publications: publications}, status: 200
+    username = params[:username]
+    if username
+      publications = Publication.where('pubid in (?)', Publication.where('created_by = (?) or updated_by = (?)', username, username).map { |p| p.pubid}).where(is_draft: true).where(is_deleted: false)
+      render json: {publications: publications}, status: 200
+    else
+      render json: {publications: []}, status: 200
+    end
   end
 
   def show
