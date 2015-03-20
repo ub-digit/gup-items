@@ -21,7 +21,7 @@ class PublicationsController < ApplicationController
   def index_actor
     person_id = params[:person_id]
     if person_id
-      publications = Publication.where('id in (?)', People2publication.where('person_id = (?)', person_id).map { |p| p.id}).where(is_draft: false).where(is_deleted: false)      
+      publications = Publication.where('id in (?)', People2publication.where('person_id = (?)', person_id.to_i).map { |p| p.publication_id}).where(is_draft: false).where(is_deleted: false)      
       render json: {publications: publications}, status: 200
     else
       render json: {publications: []}, status: 200
