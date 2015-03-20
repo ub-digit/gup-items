@@ -59,10 +59,6 @@ RSpec.describe Publication, :type => :model do
           p = Publication.new is_draft: false, is_deleted: true, pubid: 12345, publication_type_id: PublicationType.find_by_label('article-pop').id, author:"Bengt Sändh", pubyear:2014, abstract:"This is an abstract..."
           expect(p.save).to be_falsey
         end
-        it "needs author" do
-          p = Publication.new is_draft: false, is_deleted: true, pubid: 12345, publication_type_id: PublicationType.find_by_label('article-pop').id, title:"Test-title", pubyear:2014, abstract:"This is an abstract..."
-          expect(p.save).to be_falsey
-        end
         it "needs pubyear" do
           p = Publication.new is_draft: false, is_deleted: true, pubid: 12345, publication_type_id: PublicationType.find_by_label('article-pop').id, title:"Test-title", author:"Bengt Sändh", abstract:"This is an abstract..."
           expect(p.save).to be_falsey

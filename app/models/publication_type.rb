@@ -162,9 +162,6 @@ class PublicationType < ActiveRecord::Base
     if publication.title.blank?
       publication.errors.add(:title, 'Needs a title')
     end
-    if publication.author.blank?
-      publication.errors.add(:author, 'Needs an author')
-    end
 
     if publication.pubyear.blank?
       publication.errors.add(:pubyear, 'Needs a publication year')
