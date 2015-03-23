@@ -15,6 +15,7 @@ GupPublications::Application.routes.draw do
   put 'publications/:pubid' => 'publications#update'
   delete 'publications/:pubid' => 'publications#delete'
 
+  get 'affiliations' => 'affiliations#index'
 
   get 'publication_types' => 'publication_types#index'
   get 'publication_types/:id' => 'publication_types#show'
